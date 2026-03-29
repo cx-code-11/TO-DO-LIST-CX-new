@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   const clients = [
-    { name: "Acme Corp",  subdomain: "acme"   },
+    { name: "Cmx Corp",   subdomain: "cmx"    },
     { name: "Globex Inc", subdomain: "globex" },
   ];
 

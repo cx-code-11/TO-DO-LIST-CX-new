@@ -4,7 +4,7 @@ const BASE = import.meta.env.VITE_API_URL ?? "";
 const hostname = window.location.hostname;
 const isLocal  = hostname === "localhost" || hostname === "127.0.0.1";
 export const SUBDOMAIN = isLocal
-  ? new URLSearchParams(window.location.search).get("subdomain") ?? "acme"
+  ? new URLSearchParams(window.location.search).get("subdomain") ?? "cmx"
   : hostname.split(".")[0];
 
 function headers() {

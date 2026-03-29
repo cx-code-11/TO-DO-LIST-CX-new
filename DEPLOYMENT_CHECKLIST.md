@@ -29,7 +29,7 @@ Work through this top to bottom. Check each box as you complete it.
 ### ACM SSL Certificate
 - [ ] Go to ACM (must be in us-east-1)
 - [ ] Request public certificate
-- [ ] Add domains: `yourdomain.com` and `*.yourdomain.com`
+- [ ] Add domains: `ciphermutex.com` and `*.ciphermutex.com`
 - [ ] DNS validation → Create records in Route 53
 - [ ] Wait for status: Issued (~5 min)
 
@@ -45,7 +45,7 @@ Work through this top to bottom. Check each box as you complete it.
 - [ ] Create distribution for client-app
   - [ ] Origin: S3 website endpoint (NOT bucket ARN)
   - [ ] Viewer protocol: Redirect HTTP to HTTPS
-  - [ ] Alternate domain: `acme.yourdomain.com`
+  - [ ] Alternate domain: `cmx.ciphermutex.com`
   - [ ] SSL cert: select ACM cert
   - [ ] Default root: `index.html`
   - [ ] After creating: Error Pages → 403 → `/index.html` → 200
@@ -53,18 +53,18 @@ Work through this top to bottom. Check each box as you complete it.
   - [ ] Copy Distribution ID → save as `CF_DISTRIBUTION_CLIENT`
   - [ ] Copy CloudFront domain name (e.g. `xxxx.cloudfront.net`)
 - [ ] Create distribution for admin-dashboard
-  - [ ] Alternate domain: `admin.yourdomain.com`
+  - [ ] Alternate domain: `admin.ciphermutex.com`
   - [ ] Same settings as above
   - [ ] Copy Distribution ID → save as `CF_DISTRIBUTION_ADMIN`
   - [ ] Copy CloudFront domain name
 
 ### Route 53 DNS
-- [ ] Create hosted zone for `yourdomain.com`
+- [ ] Create hosted zone for `ciphermutex.com`
 - [ ] Copy NS records → paste into domain registrar nameservers
-- [ ] Add record: `api.yourdomain.com` → A → EC2 Elastic IP
-- [ ] Add record: `admin.yourdomain.com` → CNAME → admin CloudFront domain
-- [ ] Add record: `acme.yourdomain.com` → CNAME → client CloudFront domain
-- [ ] Add record: `*.yourdomain.com` → CNAME → client CloudFront domain
+- [ ] Add record: `api.ciphermutex.com` → A → EC2 Elastic IP
+- [ ] Add record: `admin.ciphermutex.com` → CNAME → admin CloudFront domain
+- [ ] Add record: `cmx.ciphermutex.com` → CNAME → client CloudFront domain
+- [ ] Add record: `*.ciphermutex.com` → CNAME → client CloudFront domain
 
 ### IAM User for GitHub Actions
 - [ ] IAM → Create user: `github-actions-pern-todo`
@@ -92,9 +92,9 @@ ssh -i your-key.pem ubuntu@YOUR_ELASTIC_IP
 - [ ] Start with PM2: `pm2 start ecosystem.config.js`
 - [ ] Enable PM2 on reboot: `pm2 startup` → copy-paste the printed command → run it
 - [ ] Save PM2 state: `pm2 save`
-- [ ] Configure Nginx: `sudo bash scripts/nginx-setup.sh api.yourdomain.com`
-- [ ] Install SSL: `sudo certbot --nginx -d api.yourdomain.com`
-- [ ] Test health check: `curl https://api.yourdomain.com/health`
+- [ ] Configure Nginx: `sudo bash scripts/nginx-setup.sh api.ciphermutex.com`
+- [ ] Install SSL: `sudo certbot --nginx -d api.ciphermutex.com`
+- [ ] Test health check: `curl https://api.ciphermutex.com/health`
   - [ ] Expected response: `{"ok":true,"env":"production"}`
 
 ---
@@ -117,19 +117,19 @@ ssh -i your-key.pem ubuntu@YOUR_ELASTIC_IP
   - [ ] `CF_DISTRIBUTION_ADMIN`
 - [ ] Push to main branch
 - [ ] Watch Actions tab — all 3 jobs should go green
-- [ ] Test client app: `https://acme.yourdomain.com`
-- [ ] Test admin dashboard: `https://admin.yourdomain.com`
+- [ ] Test client app: `https://cmx.ciphermutex.com`
+- [ ] Test admin dashboard: `https://admin.ciphermutex.com`
 
 ---
 
 ## Phase 4 — Final Verification
 
-- [ ] `curl https://api.yourdomain.com/health` → `{"ok":true}`
-- [ ] Client app loads at `https://acme.yourdomain.com`
+- [ ] `curl https://api.ciphermutex.com/health` → `{"ok":true}`
+- [ ] Client app loads at `https://cmx.ciphermutex.com`
 - [ ] Can add / complete / delete a todo
-- [ ] Admin dashboard loads at `https://admin.yourdomain.com`
+- [ ] Admin dashboard loads at `https://admin.ciphermutex.com`
 - [ ] Admin login works with ADMIN_TOKEN
-- [ ] Acme's todos appear in admin under the Acme tab
+- [ ] Cmx's todos appear in admin under the Cmx tab
 - [ ] "+ New Client" creates a new client in the database
 - [ ] SSL padlock showing on all 3 domains
 

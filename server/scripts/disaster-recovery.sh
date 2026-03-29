@@ -21,8 +21,8 @@ echo ""
 read -p "GitHub repo URL (e.g. https://github.com/user/pern-todo.git): " REPO_URL
 read -p "DATABASE_URL (postgresql://...): " DB_URL
 read -p "ADMIN_TOKEN: " ADMIN_TOKEN
-read -p "ALLOWED_ORIGINS (e.g. https://acme.yourdomain.com,https://admin.yourdomain.com): " ORIGINS
-read -p "API domain (e.g. api.yourdomain.com): " API_DOMAIN
+read -p "ALLOWED_ORIGINS (e.g. https://cmx.ciphermutex.com,https://admin.ciphermutex.com): " ORIGINS
+read -p "API domain (e.g. api.ciphermutex.com): " API_DOMAIN
 
 echo ""
 echo "▶ Installing system packages..."
@@ -65,7 +65,7 @@ echo "▶ Configuring Nginx..."
 sudo bash scripts/nginx-setup.sh "$API_DOMAIN"
 
 echo "▶ Installing SSL certificate..."
-sudo certbot --nginx -d "$API_DOMAIN" --non-interactive --agree-tos -m admin@yourdomain.com
+sudo certbot --nginx -d "$API_DOMAIN" --non-interactive --agree-tos -m admin@ciphermutex.com
 
 echo "▶ Final health check..."
 sleep 5

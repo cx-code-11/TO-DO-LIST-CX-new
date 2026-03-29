@@ -24,7 +24,7 @@ mkdir -p /home/ubuntu/logs
 
 echo "▶ Cloning repository..."
 # Replace with your actual GitHub repo URL
-git clone https://github.com/YOUR_USERNAME/pern-todo.git /home/ubuntu/pern-todo
+git clone https://github.com/cx-code-11/TO-DO-LIST-CX-new.git /home/ubuntu/pern-todo
 
 echo "▶ Installing server dependencies..."
 cd /home/ubuntu/pern-todo/server
@@ -43,5 +43,5 @@ echo "  3. Run: npm run db:seed"
 echo "  4. Run: pm2 start ecosystem.config.js"
 echo "  5. Run: pm2 startup  (then copy-paste the printed command)"
 echo "  6. Run: pm2 save"
-echo "  7. Configure Nginx:  sudo bash scripts/nginx-setup.sh api.yourdomain.com"
-echo "  8. SSL:              sudo certbot --nginx -d api.yourdomain.com"
+echo "  7. Configure Nginx:  sudo bash scripts/nginx-setup.sh api.ciphermutex.com"
+echo "  8. SSL:              sudo certbot --nginx -d api.ciphermutex.com"

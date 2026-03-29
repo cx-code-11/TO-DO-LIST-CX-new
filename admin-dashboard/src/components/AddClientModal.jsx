@@ -34,7 +34,7 @@ export default function AddClientModal({ onSave, onClose }) {
           <input
             className={styles.input}
             type="text"
-            placeholder="Acme Corp"
+            placeholder="Cmx Corp"
             value={name}
             onChange={(e) => setName(e.target.value)}
             autoFocus
@@ -46,13 +46,13 @@ export default function AddClientModal({ onSave, onClose }) {
           <input
             className={styles.input}
             type="text"
-            placeholder="acme"
+            placeholder="cmx"
             value={subdomain}
             onChange={(e) => handleSubdomain(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && submit()}
           />
           {subdomain && (
-            <span className={styles.preview}>{subdomain}.yourdomain.com</span>
+            <span className={styles.preview}>{subdomain}.ciphermutex.com</span>
           )}
         </div>
 

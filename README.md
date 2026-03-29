@@ -5,12 +5,12 @@
 ```
 GitHub (main branch)
        │
-       ├── GitHub Actions ──► EC2 (SSH git pull + pm2 restart)  ← api.yourdomain.com
+       ├── GitHub Actions ──► EC2 (SSH git pull + pm2 restart)  ← api.ciphermutex.com
        │                              │
        │                         RDS PostgreSQL (free tier)
        │
-       ├── GitHub Actions ──► S3 + CloudFront  ← acme.yourdomain.com
-       └── GitHub Actions ──► S3 + CloudFront  ← admin.yourdomain.com
+       ├── GitHub Actions ──► S3 + CloudFront  ← cmx.ciphermutex.com
+       └── GitHub Actions ──► S3 + CloudFront  ← admin.ciphermutex.com
 ```
 
 ## AWS Services Used (all free tier eligible)
@@ -111,13 +111,13 @@ pm2 save
 ### 2f. Configure Nginx + SSL
 
 ```bash
-sudo bash scripts/nginx-setup.sh api.yourdomain.com
-sudo certbot --nginx -d api.yourdomain.com
+sudo bash scripts/nginx-setup.sh api.ciphermutex.com
+sudo certbot --nginx -d api.ciphermutex.com
 ```
 
 Test it:
 ```bash
-curl https://api.yourdomain.com/health
+curl https://api.ciphermutex.com/health
 # → {"ok":true,"env":"production"}
 ```
 
@@ -161,8 +161,8 @@ Same steps, bucket name: `pern-todo-admin-dashboard`
 2. Certificate type: Public
 3. Domain names — add all:
    ```
-   yourdomain.com
-   *.yourdomain.com
+   ciphermutex.com
+   *.ciphermutex.com
    ```
 4. Validation: DNS validation
 5. Click Create records in Route 53 (auto-creates CNAME records)
@@ -178,7 +178,7 @@ Same steps, bucket name: `pern-todo-admin-dashboard`
 2. Origin domain: S3 **website endpoint** (not the bucket ARN)
    - Looks like: `pern-todo-client-app.s3-website-us-east-1.amazonaws.com`
 3. Viewer protocol policy: **Redirect HTTP to HTTPS**
-4. Alternate domain names (CNAMEs): `acme.yourdomain.com`
+4. Alternate domain names (CNAMEs): `cmx.ciphermutex.com`
 5. Custom SSL certificate: select your ACM cert
 6. Default root object: `index.html`
 7. Create → wait ~10 minutes for deployment
@@ -189,7 +189,7 @@ Same steps, bucket name: `pern-todo-admin-dashboard`
 
 ### For admin-dashboard
 
-Same steps, alternate domain: `admin.yourdomain.com`
+Same steps, alternate domain: `admin.ciphermutex.com`
 Copy Distribution ID → `CF_DISTRIBUTION_ADMIN`
 
 ---
@@ -197,16 +197,16 @@ Copy Distribution ID → `CF_DISTRIBUTION_ADMIN`
 ## STEP 6 — Route 53 DNS
 
 1. Route 53 → Hosted zones → Create hosted zone
-2. Domain name: `yourdomain.com`
+2. Domain name: `ciphermutex.com`
 3. Copy the **4 NS records** → paste into your domain registrar's nameserver settings
 4. Create records:
 
 | Name                   | Type  | Value                              |
 |------------------------|-------|------------------------------------|
-| api.yourdomain.com     | A     | YOUR_EC2_ELASTIC_IP                |
-| acme.yourdomain.com    | CNAME | CloudFront domain (client-app)     |
-| admin.yourdomain.com   | CNAME | CloudFront domain (admin-dash)     |
-| *.yourdomain.com       | CNAME | CloudFront domain (client-app)     |
+| api.ciphermutex.com     | A     | YOUR_EC2_ELASTIC_IP                |
+| cmx.ciphermutex.com     | CNAME | CloudFront domain (client-app)     |
+| admin.ciphermutex.com   | CNAME | CloudFront domain (admin-dash)     |
+| *.ciphermutex.com       | CNAME | CloudFront domain (client-app)     |
 
 ---
 
@@ -235,7 +235,7 @@ Add all secrets listed in `.github/SECRETS.md`:
 | EC2_HOST                | Your EC2 Elastic IP                  |
 | EC2_USER                | ubuntu                               |
 | EC2_SSH_KEY             | Full content of your .pem key file   |
-| VITE_API_URL            | https://api.yourdomain.com           |
+| VITE_API_URL            | https://api.ciphermutex.com          |
 | S3_BUCKET_CLIENT        | pern-todo-client-app                 |
 | S3_BUCKET_ADMIN         | pern-todo-admin-dashboard            |
 | CF_DISTRIBUTION_CLIENT  | CloudFront distribution ID (client)  |
@@ -286,9 +286,9 @@ git add . && git commit -m "db: add new field" && git push
 ### Add a new client subdomain
 ```bash
 # 1. In admin dashboard → + New Client → enter name + subdomain
-# 2. Route 53 → add CNAME: newclient.yourdomain.com → CloudFront domain
-# 3. CloudFront → Alternate domains → add newclient.yourdomain.com
-# 4. ACM wildcard cert already covers *.yourdomain.com — no action needed
+# 2. Route 53 → add CNAME: newclient.ciphermutex.com → CloudFront domain
+# 3. CloudFront → Alternate domains → add newclient.ciphermutex.com
+# 4. ACM wildcard cert already covers *.ciphermutex.com — no action needed
 # Done — same S3 build serves all subdomains
 ```
 
@@ -312,7 +312,7 @@ git add . && git commit -m "db: add new field" && git push
 
 ```bash
 # Check API is running
-curl https://api.yourdomain.com/health
+curl https://api.ciphermutex.com/health
 
 # Check PM2 logs on EC2
 ssh -i key.pem ubuntu@EC2_IP

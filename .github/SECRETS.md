@@ -22,7 +22,7 @@ EC2_SSH_KEY              = -----BEGIN RSA PRIVATE KEY-----
                            -----END RSA PRIVATE KEY-----
 
 # ── React build env vars ─────────────────────────────────────────
-VITE_API_URL             = https://api.yourdomain.com
+VITE_API_URL             = https://api.ciphermutex.com
 
 # ── S3 bucket names ──────────────────────────────────────────────
 S3_BUCKET_CLIENT         = pern-todo-client-app

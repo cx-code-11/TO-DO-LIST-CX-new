@@ -2,11 +2,11 @@
 # =============================================================
 #  scripts/nginx-setup.sh
 #  Sets up Nginx reverse proxy for the API
-#  Usage: sudo bash scripts/nginx-setup.sh api.yourdomain.com
+#  Usage: sudo bash scripts/nginx-setup.sh api.ciphermutex.com
 # =============================================================
 set -e
 
-DOMAIN=${1:-"api.yourdomain.com"}
+DOMAIN=${1:-"api.ciphermutex.com"}
 
 echo "▶ Writing Nginx config for $DOMAIN..."
 

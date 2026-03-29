@@ -1,18 +1,18 @@
 # Route 53 DNS Records
-# AWS Console → Route 53 → Hosted zones → yourdomain.com → Create record
+# AWS Console → Route 53 → Hosted zones → ciphermutex.com → Create record
 
 # ── Required Records ──────────────────────────────────────────────────────
 Name                      Type    Value                               TTL
 ────────────────────────  ──────  ──────────────────────────────────  ─────
-api.yourdomain.com        A       YOUR_EC2_ELASTIC_IP                 300
-admin.yourdomain.com      CNAME   xxxxx.cloudfront.net (admin CF)     300
-acme.yourdomain.com       CNAME   xxxxx.cloudfront.net (client CF)    300
-*.yourdomain.com          CNAME   xxxxx.cloudfront.net (client CF)    300
+api.ciphermutex.com       A       YOUR_EC2_ELASTIC_IP                 300
+admin.ciphermutex.com     CNAME   xxxxx.cloudfront.net (admin CF)     300
+cmx.ciphermutex.com       CNAME   xxxxx.cloudfront.net (client CF)    300
+*.ciphermutex.com         CNAME   xxxxx.cloudfront.net (client CF)    300
 
 # ── For each new client ────────────────────────────────────────────────────
-newclient.yourdomain.com  CNAME   xxxxx.cloudfront.net (client CF)    300
+newclient.ciphermutex.com CNAME   xxxxx.cloudfront.net (client CF)    300
 
-# Note: *.yourdomain.com wildcard covers all new subdomains automatically.
+# Note: *.ciphermutex.com wildcard covers all new subdomains automatically.
 # But CloudFront also needs the subdomain added to its Alternate Domains list.
 
 # ── ACM validation records (auto-created by AWS) ──────────────────────────

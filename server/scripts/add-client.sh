@@ -7,13 +7,13 @@
 #  Usage: bash add-client.sh
 # =============================================================
 
-read -p "API URL (e.g. https://api.yourdomain.com): " API_URL
+read -p "API URL (e.g. https://api.ciphermutex.com): " API_URL
 read -p "Admin token: " ADMIN_TOKEN
-read -p "Client name (e.g. Acme Corp): " CLIENT_NAME
-read -p "Subdomain (e.g. acme): " SUBDOMAIN
+read -p "Client name (e.g. Cmx Corp): " CLIENT_NAME
+read -p "Subdomain (e.g. cmx): " SUBDOMAIN
 
 echo ""
-echo "▶ Registering client '${CLIENT_NAME}' at ${SUBDOMAIN}.yourdomain.com ..."
+echo "▶ Registering client '${CLIENT_NAME}' at ${SUBDOMAIN}.ciphermutex.com ..."
 
 RESPONSE=$(curl -s -w "\n%{http_code}" \
   -X POST "${API_URL}/admin/clients" \
@@ -28,10 +28,10 @@ if [ "$HTTP_CODE" = "201" ]; then
   echo "✅ Client created: $BODY"
   echo ""
   echo "Next steps:"
-  echo "  1. Route 53 → add CNAME: ${SUBDOMAIN}.yourdomain.com → your CloudFront domain"
-  echo "  2. CloudFront → Alternate domains → add ${SUBDOMAIN}.yourdomain.com"
+  echo "  1. Route 53 → add CNAME: ${SUBDOMAIN}.ciphermutex.com → your CloudFront domain"
+  echo "  2. CloudFront → Alternate domains → add ${SUBDOMAIN}.ciphermutex.com"
   echo "  3. Wait ~5 min for DNS propagation"
-  echo "  4. Test: curl https://${SUBDOMAIN}.yourdomain.com"
+  echo "  4. Test: curl https://${SUBDOMAIN}.ciphermutex.com"
 else
   echo "❌ Failed (HTTP $HTTP_CODE): $BODY"
 fi
