@@ -1,0 +1,21 @@
+# Route 53 DNS Records
+# AWS Console → Route 53 → Hosted zones → yourdomain.com → Create record
+
+# ── Required Records ──────────────────────────────────────────────────────
+Name                      Type    Value                               TTL
+────────────────────────  ──────  ──────────────────────────────────  ─────
+api.yourdomain.com        A       YOUR_EC2_ELASTIC_IP                 300
+admin.yourdomain.com      CNAME   xxxxx.cloudfront.net (admin CF)     300
+acme.yourdomain.com       CNAME   xxxxx.cloudfront.net (client CF)    300
+*.yourdomain.com          CNAME   xxxxx.cloudfront.net (client CF)    300
+
+# ── For each new client ────────────────────────────────────────────────────
+newclient.yourdomain.com  CNAME   xxxxx.cloudfront.net (client CF)    300
+
+# Note: *.yourdomain.com wildcard covers all new subdomains automatically.
+# But CloudFront also needs the subdomain added to its Alternate Domains list.
+
+# ── ACM validation records (auto-created by AWS) ──────────────────────────
+# These are created automatically when you click
+# "Create records in Route 53" during ACM certificate request.
+# Do NOT delete them — they keep your cert valid.

@@ -1,0 +1,28 @@
+.wrap {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.btn {
+  padding: 7px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn.active {
+  background: var(--text);
+  color: #fff;
+  border-color: var(--text);
+}
+
+.btn:hover:not(.active) {
+  border-color: var(--accent);
+  color: var(--accent);
+}

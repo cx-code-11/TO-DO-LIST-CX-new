@@ -1,0 +1,23 @@
+# CloudFront Custom Error Pages (for React Router SPA)
+# Add these in: CloudFront → Distribution → Error Pages tab
+#
+# Without this, refreshing /some/route returns 403/404 from S3
+# These rules redirect all 403/404s back to index.html
+# so React Router can handle the path client-side.
+
+Error Code: 403
+Response Page Path: /index.html
+Response Code: 200
+TTL: 0
+
+Error Code: 404
+Response Page Path: /index.html
+Response Code: 200
+TTL: 0
+
+# ── AWS CLI equivalent ──────────────────────────────────────────
+# Replace YOUR_CF_DISTRIBUTION_ID with your actual distribution ID
+#
+# aws cloudfront update-distribution \
+#   --id YOUR_CF_DISTRIBUTION_ID \
+#   --distribution-config file://infra/cf-distribution-config.json

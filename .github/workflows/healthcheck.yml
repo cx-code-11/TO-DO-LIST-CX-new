@@ -1,0 +1,40 @@
+name: Health Check
+
+# Runs every 5 minutes and pings the API /health endpoint
+# Fails the workflow (visible in Actions tab) if the API is down
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"   # every 5 minutes
+  workflow_dispatch:          # allow manual trigger too
+
+jobs:
+  ping:
+    name: Ping API health endpoint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check API /health
+        run: |
+          echo "Pinging https://api.yourdomain.com/health ..."
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+            --max-time 10 \
+            https://api.yourdomain.com/health)
+
+          echo "HTTP status: $RESPONSE"
+
+          if [ "$RESPONSE" != "200" ]; then
+            echo "❌ Health check FAILED — got HTTP $RESPONSE"
+            exit 1
+          fi
+
+          echo "✅ API is healthy"
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "API is DOWN — add Slack/email notification here"
+          # Example Slack webhook (add SLACK_WEBHOOK to GitHub secrets):
+          # curl -X POST ${{ secrets.SLACK_WEBHOOK }} \
+          #   -H 'Content-type: application/json' \
+          #   --data '{"text":"🚨 PERN Todo API is DOWN! Check EC2."}'

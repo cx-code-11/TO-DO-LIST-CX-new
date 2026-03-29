@@ -1,0 +1,139 @@
+name: Rollback
+
+# Manually trigger a rollback to a specific commit
+# Go to: GitHub → Actions → Rollback → Run workflow
+# Enter the commit SHA you want to roll back to
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: "Commit SHA to rollback to (e.g. a1b2c3d)"
+        required: true
+        type: string
+      target:
+        description: "What to rollback"
+        required: true
+        type: choice
+        options:
+          - all
+          - api-only
+          - client-only
+          - admin-only
+
+jobs:
+  # ═══════════════════════════════════════════════════════════════
+  rollback-api:
+    name: Rollback API → EC2
+    runs-on: ubuntu-latest
+    if: ${{ inputs.target == 'all' || inputs.target == 'api-only' }}
+
+    steps:
+      - name: Rollback via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host:     ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key:      ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
+            cd /home/ubuntu/pern-todo
+
+            echo "── Current commit ──"
+            git log --oneline -1
+
+            echo "── Rolling back to ${{ inputs.commit_sha }} ──"
+            git fetch origin
+            git checkout ${{ inputs.commit_sha }}
+
+            echo "── Reinstalling dependencies ──"
+            cd server
+            npm install --omit=dev
+            npx prisma generate
+
+            echo "── NOTE: DB migrations are NOT rolled back automatically ──"
+            echo "── If schema changed, manually run: npx prisma migrate resolve ──"
+
+            echo "── Restarting PM2 ──"
+            pm2 restart pern-api
+            pm2 save
+
+            sleep 3
+            curl -f http://localhost:4000/health || exit 1
+            echo "✅ API rolled back to ${{ inputs.commit_sha }}"
+
+  # ═══════════════════════════════════════════════════════════════
+  rollback-client:
+    name: Rollback client-app → S3
+    runs-on: ubuntu-latest
+    if: ${{ inputs.target == 'all' || inputs.target == 'client-only' }}
+
+    steps:
+      - name: Checkout rollback commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.commit_sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build at rollback commit
+        working-directory: client-app
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+        run: npm ci && npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ secrets.AWS_REGION }}
+
+      - name: Deploy rollback to S3
+        run: |
+          aws s3 sync client-app/dist/ s3://${{ secrets.S3_BUCKET_CLIENT }} --delete
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CF_DISTRIBUTION_CLIENT }} \
+            --paths "/*"
+          echo "✅ client-app rolled back to ${{ inputs.commit_sha }}"
+
+  # ═══════════════════════════════════════════════════════════════
+  rollback-admin:
+    name: Rollback admin-dashboard → S3
+    runs-on: ubuntu-latest
+    if: ${{ inputs.target == 'all' || inputs.target == 'admin-only' }}
+
+    steps:
+      - name: Checkout rollback commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.commit_sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build at rollback commit
+        working-directory: admin-dashboard
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+        run: npm ci && npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ secrets.AWS_REGION }}
+
+      - name: Deploy rollback to S3
+        run: |
+          aws s3 sync admin-dashboard/dist/ s3://${{ secrets.S3_BUCKET_ADMIN }} --delete
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CF_DISTRIBUTION_ADMIN }} \
+            --paths "/*"
+          echo "✅ admin-dashboard rolled back to ${{ inputs.commit_sha }}"

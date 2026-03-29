@@ -1,0 +1,23 @@
+# EC2 Security Group Rules
+# AWS Console → EC2 → Security Groups → your-sg → Edit inbound rules
+
+# ── Inbound Rules ────────────────────────────────────────────────
+Type        Protocol  Port   Source              Purpose
+──────────  ────────  ─────  ──────────────────  ───────────────────────────
+SSH         TCP       22     YOUR_IP/32          SSH access (your IP only)
+HTTP        TCP       80     0.0.0.0/0, ::/0     Nginx HTTP (redirects to HTTPS)
+HTTPS       TCP       443    0.0.0.0/0, ::/0     Nginx HTTPS
+
+# ── Do NOT expose port 4000 publicly ────────────────────────────
+# Node.js runs on 4000 internally. Nginx proxies 443 → 4000.
+# No inbound rule for 4000 is needed or wanted.
+
+# ── RDS Security Group ───────────────────────────────────────────
+# Create a separate SG for RDS and allow only your EC2 SG:
+Type        Protocol  Port   Source              Purpose
+──────────  ────────  ─────  ──────────────────  ───────────────────────────
+PostgreSQL  TCP       5432   EC2-security-group  DB access from EC2 only
+
+# This means RDS is NOT reachable from the internet — only from your EC2.
+# To run local migrations during dev, temporarily add your IP/32 to RDS SG,
+# then remove it after.
