@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(100)
+  subdomain String   @unique @db.VarChar(63)
+  createdAt DateTime @default(now())
+  todos     Todo[]
+
+  @@map("clients")
+}
+
+model Todo {
+  id        Int      @id @default(autoincrement())
+  text      String   @db.VarChar(500)
+  done      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  clientId  Int
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+  @@map("todos")
+}
